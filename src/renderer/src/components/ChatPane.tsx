@@ -1,7 +1,10 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
+import { Copy, Check } from "lucide-react";
 import { useChat } from "@/store/chat";
 import { ToolCallChip } from "./ToolCallChip";
+import { MessageMarkdown } from "./MessageMarkdown";
+import { copyRichText, nodeHtml } from "@/lib/copy";
 import { cn } from "@/lib/cn";
 
 export function ChatPane() {
@@ -38,38 +41,90 @@ export function ChatPane() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               className={cn(
-                "flex",
+                "flex group",
                 m.role === "user" ? "justify-end" : "justify-start"
               )}
             >
-              <div
-                className={cn(
-                  "max-w-[85%] rounded-2xl px-3.5 py-2.5 text-sm leading-relaxed",
-                  m.role === "user"
-                    ? "bg-[hsl(var(--accent))]/85 text-white"
-                    : "bg-white/5 text-white/95 border border-white/5"
-                )}
-              >
-                {m.text && <p className="whitespace-pre-wrap">{m.text}</p>}
-                {m.toolCalls.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-1.5">
-                    {m.toolCalls.map((c) => (
-                      <ToolCallChip key={c.id} call={c} />
-                    ))}
-                  </div>
-                )}
-                {m.streaming && !m.text && (
-                  <span className="inline-flex h-3 items-end gap-0.5">
-                    <Dot delay={0} />
-                    <Dot delay={150} />
-                    <Dot delay={300} />
-                  </span>
-                )}
-              </div>
+              {m.role === "user" ? (
+                <UserBubble text={m.text} />
+              ) : (
+                <AssistantBubble
+                  text={m.text}
+                  streaming={m.streaming}
+                  toolCalls={m.toolCalls}
+                />
+              )}
             </motion.div>
           );
         })}
       </AnimatePresence>
+    </div>
+  );
+}
+
+function UserBubble({ text }: { text: string }) {
+  return (
+    <div className="max-w-[85%] rounded-2xl bg-[hsl(var(--accent))]/85 px-3.5 py-2.5 text-sm leading-relaxed text-white">
+      <p className="whitespace-pre-wrap">{text}</p>
+    </div>
+  );
+}
+
+function AssistantBubble({
+  text,
+  streaming,
+  toolCalls,
+}: {
+  text: string;
+  streaming: boolean;
+  toolCalls: any[];
+}) {
+  const mdRef = useRef<HTMLDivElement>(null);
+  const [copied, setCopied] = useState(false);
+  const showThinking = streaming && !text;
+
+  const onCopy = async () => {
+    const ok = await copyRichText({
+      plain: text,
+      html: nodeHtml(mdRef.current),
+    });
+    if (ok) {
+      setCopied(true);
+      setTimeout(() => setCopied(false), 1400);
+    }
+  };
+
+  return (
+    <div className="relative max-w-[88%] rounded-2xl border border-white/5 bg-white/5 px-3.5 py-2.5 text-sm leading-relaxed text-white/95">
+      {text && <MessageMarkdown ref={mdRef} text={text} />}
+      {toolCalls.length > 0 && (
+        <div className="mt-2 flex flex-wrap gap-1.5">
+          {toolCalls.map((c) => (
+            <ToolCallChip key={c.id} call={c} />
+          ))}
+        </div>
+      )}
+      {showThinking && (
+        <span className="inline-flex h-3 items-end gap-0.5">
+          <Dot delay={0} />
+          <Dot delay={150} />
+          <Dot delay={300} />
+        </span>
+      )}
+      {text && !streaming && (
+        <button
+          onClick={onCopy}
+          className={cn(
+            "absolute -right-1 -top-1 inline-flex h-6 items-center gap-1 rounded-full border border-white/10 bg-black/60 px-2 text-[10px] font-medium text-white/80 opacity-0 backdrop-blur transition-all",
+            "group-hover:opacity-100 hover:border-white/30 hover:text-white",
+            copied && "border-[hsl(var(--success))]/40 text-[hsl(var(--success))] opacity-100"
+          )}
+          title="Copiar con formato"
+        >
+          {copied ? <Check size={11} /> : <Copy size={11} />}
+          <span>{copied ? "Copiado" : "Copiar"}</span>
+        </button>
+      )}
     </div>
   );
 }

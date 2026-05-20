@@ -28,6 +28,11 @@ export function useAgent(opts: UseAgentOpts = {}) {
       chat.setBusy(true);
       await window.iTutor.agent.start({ prompt: text });
     },
-    abort: () => window.iTutor.agent.abort(),
+    abort: () => {
+      // Dispara un evento global para que el avatar también se calle.
+      window.dispatchEvent(new CustomEvent("itutor:abort"));
+      useChat.getState().setBusy(false);
+      return window.iTutor.agent.abort();
+    },
   };
 }

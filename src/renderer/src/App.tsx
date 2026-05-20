@@ -4,6 +4,7 @@ import { HeaderBar } from "./components/HeaderBar";
 import { AvatarStage } from "./components/AvatarStage";
 import { ChatPane } from "./components/ChatPane";
 import { Composer } from "./components/Composer";
+import { StopBanner } from "./components/StopBanner";
 import type { AppSettings } from "@shared/types";
 
 export function App() {
@@ -34,6 +35,7 @@ export function App() {
         />
       )}
       <ChatPane />
+      <StopBanner />
       <Composer />
     </FrostedShell>
   );
