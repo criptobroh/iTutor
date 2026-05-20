@@ -1,4 +1,13 @@
-# iTutor
+# iTutor (Electron MVP — archivado)
+
+> ⚠️ **Este repo está archivado al commit `dd86d06` (tag `v0.1.0-electron-mvp`).**
+>
+> El MVP Electron local funcionó pero pivotamos a SaaS web multi-tenant con VMs efímeras
+> + computer use remoto. La continuación vive en **[`criptobroh/iTutor-saas`](https://github.com/criptobroh/iTutor-saas)**.
+>
+> Si querés correr el MVP local original, hacé `git checkout v0.1.0-electron-mvp`.
+
+---
 
 > Un tutor AI de escritorio con **cara, voz y manos**. Vive como una ventana flotante
 > hermosa (estilo Raycast), responde con un avatar de video real (HeyGen), y opera tu
