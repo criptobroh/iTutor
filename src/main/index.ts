@@ -18,7 +18,10 @@ function loadEnvFromKnownPaths(): void {
   ].filter((p): p is string => !!p);
   for (const p of candidates) {
     if (existsSync(p)) {
-      const result = loadEnv({ path: p });
+      // override: true — el shell desde el que se lanza Electron puede tener
+      // env vars vacías (ej. Claude Code blanquea ANTHROPIC_API_KEY para sus
+      // subprocesos). Sin override, esos valores vacíos ganan sobre el .env.
+      const result = loadEnv({ path: p, override: true });
       if (!result.error) {
         console.log(`[iTutor] .env cargado desde ${p}`);
         return;
@@ -30,6 +33,11 @@ function loadEnvFromKnownPaths(): void {
   );
 }
 loadEnvFromKnownPaths();
+// Confirmación mínima sin exponer secretos.
+console.log(
+  `[iTutor] env: ANTHROPIC=${process.env.ANTHROPIC_API_KEY ? "ok" : "MISSING"}, ` +
+    `LIVEAVATAR=${process.env.LIVEAVATAR_API_KEY ? "ok" : "missing"}`
+);
 
 // 🛰️ Network compatibility flags (set ANTES de app.whenReady).
 // Estos dos flags destraban WebRTC cuando hay iCloud Private Relay, Cloudflare

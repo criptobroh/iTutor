@@ -13,17 +13,15 @@ export function HeaderBar() {
   }, []);
 
   return (
-    <div className="drag-region flex h-11 items-center justify-between px-3 select-none">
-      <div className="flex items-center gap-2 pl-2">
-        <div className="relative flex h-2.5 w-2.5">
-          <span className="absolute inset-0 animate-ping rounded-full bg-[hsl(var(--accent))] opacity-60" />
-          <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[hsl(var(--accent))]" />
-        </div>
-        <span className="text-xs font-semibold tracking-wide text-white/90">
-          iTutor
+    <div className="drag-region relative flex h-11 items-center px-3 select-none">
+      {/* Título centrado absoluto — los botones de la derecha no descentran el texto */}
+      <div className="pointer-events-none absolute inset-x-0 top-0 flex h-11 items-center justify-center">
+        <span className="text-[13px] font-semibold tracking-[0.02em] text-white/95">
+          <span className="text-white/55">IEB</span>{" "}
+          <span className="text-white">iTutor</span>
         </span>
       </div>
-      <div className="no-drag flex items-center gap-1">
+      <div className="no-drag ml-auto flex items-center gap-1">
         <Button
           variant="ghost"
           size="icon"
