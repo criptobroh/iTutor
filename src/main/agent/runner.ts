@@ -43,14 +43,13 @@ export async function runAgent(
           append: TUTOR_SYSTEM_PROMPT,
         },
         mcpServers: mcpServers as unknown as Record<string, never>,
+        // 🔒 HARDENING: solo tools del MCP computer-use y Playwright.
+        // Sacamos Read/Glob/Grep/WebSearch/WebFetch/Bash/Write/Edit del
+        // allowlist — el tutor NO necesita leer/escribir archivos ni navegar
+        // por su cuenta. Cualquier prompt injection que intente "ejecutá X
+        // archivo" falla porque el tool no está habilitado.
         allowedTools: [
-          // Built-ins útiles del Agent SDK
-          "Read",
-          "Glob",
-          "Grep",
-          "WebSearch",
-          "WebFetch",
-          // MCP computer-use
+          // MCP computer-use (local, kill-switched)
           "mcp__computer-use__take_screenshot",
           "mcp__computer-use__mouse_move",
           "mcp__computer-use__mouse_click",
@@ -60,7 +59,7 @@ export async function runAgent(
           "mcp__computer-use__keyboard_hotkey",
           "mcp__computer-use__wait",
           "mcp__computer-use__get_screen_size",
-          // Playwright MCP
+          // Playwright MCP (browser navegando explícitamente, no acceso fs)
           "mcp__playwright__browser_navigate",
           "mcp__playwright__browser_click",
           "mcp__playwright__browser_type",
@@ -68,6 +67,9 @@ export async function runAgent(
           "mcp__playwright__browser_screenshot",
           "mcp__playwright__browser_close",
         ],
+        // bypassPermissions + allowlist restrictivo arriba = el agent solo
+        // puede ejecutar tools de mouse/teclado/screenshot/browser. No hay
+        // shell, no fs, no exfiltración via WebFetch.
         permissionMode: "bypassPermissions",
         ...(req.resumeSessionId ? { resume: req.resumeSessionId } : {}),
       },
