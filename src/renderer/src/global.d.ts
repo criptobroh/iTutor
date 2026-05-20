@@ -30,6 +30,7 @@ interface ITutorApi {
       language?: string;
       voiceId?: string;
     }): Promise<HeygenSessionToken>;
+    onGracefulStop(cb: () => void): () => void;
   };
   settings: {
     get(): Promise<AppSettings>;

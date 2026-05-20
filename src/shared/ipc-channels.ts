@@ -12,8 +12,9 @@ export const IPC = {
   // Voice (push-to-talk)
   VOICE_TRANSCRIBE: "voice:transcribe",
 
-  // HeyGen
+  // HeyGen / LiveAvatar
   HEYGEN_TOKEN: "heygen:token",
+  AVATAR_GRACEFUL_STOP: "avatar:graceful-stop",
 
   // Settings
   SETTINGS_GET: "settings:get",

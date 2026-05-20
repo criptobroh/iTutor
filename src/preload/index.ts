@@ -36,6 +36,11 @@ const api = {
     }): Promise<HeygenSessionToken> {
       return ipcRenderer.invoke(IPC.HEYGEN_TOKEN, opts);
     },
+    onGracefulStop(cb: () => void): () => void {
+      const listener = () => cb();
+      ipcRenderer.on(IPC.AVATAR_GRACEFUL_STOP, listener);
+      return () => ipcRenderer.off(IPC.AVATAR_GRACEFUL_STOP, listener);
+    },
   },
   settings: {
     get(): Promise<AppSettings> {

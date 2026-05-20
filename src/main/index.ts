@@ -1,8 +1,35 @@
 import { app, BrowserWindow, globalShortcut, ipcMain } from "electron";
 import { config as loadEnv } from "dotenv";
 import { join } from "node:path";
+import { existsSync } from "node:fs";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
+
+// Cargar .env ANTES de cualquier otro import (para que store.ts y demás vean
+// las env vars al evaluar sus módulos). Probamos varios paths porque el cwd
+// puede ser distinto en dev (electron-vite) vs packaged.
+function loadEnvFromKnownPaths(): void {
+  const candidates = [
+    process.env.ITUTOR_ENV_PATH,
+    join(app.getAppPath(), ".env"),
+    join(process.cwd(), ".env"),
+    // Packaged: app.asar.unpacked/.env
+    join(process.resourcesPath ?? "", "app.asar.unpacked/.env"),
+  ].filter((p): p is string => !!p);
+  for (const p of candidates) {
+    if (existsSync(p)) {
+      const result = loadEnv({ path: p });
+      if (!result.error) {
+        console.log(`[iTutor] .env cargado desde ${p}`);
+        return;
+      }
+    }
+  }
+  console.warn(
+    "[iTutor] No encontré .env. Probé:\n  - " + candidates.join("\n  - ")
+  );
+}
+loadEnvFromKnownPaths();
 
 // 🛰️ Network compatibility flags (set ANTES de app.whenReady).
 // Estos dos flags destraban WebRTC cuando hay iCloud Private Relay, Cloudflare
@@ -42,8 +69,6 @@ import {
   toggleKillSwitch,
   installEscEscEscWatcher,
 } from "./mcp/computer-use/safety.js";
-
-loadEnv();
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -124,6 +149,22 @@ app.on("activate", () => {
 
 app.on("will-quit", () => {
   globalShortcut.unregisterAll();
+});
+
+// Graceful shutdown del avatar: avisamos al renderer que cierre la sesión
+// LiveAvatar limpio antes de cerrar la ventana. Sin esto, cada restart deja
+// una sesión zombi que cuenta contra el concurrency limit de la cuenta hasta
+// que LiveAvatar la autopurgue (~3-5 min).
+let isQuitting = false;
+app.on("before-quit", (event) => {
+  if (isQuitting) return;
+  if (mainWindow && !mainWindow.isDestroyed()) {
+    event.preventDefault();
+    isQuitting = true;
+    mainWindow.webContents.send("avatar:graceful-stop");
+    // Damos 500ms para que el renderer mande el SESSION_STOP a LiveAvatar.
+    setTimeout(() => app.exit(0), 500);
+  }
 });
 
 // Avoid the warning sea

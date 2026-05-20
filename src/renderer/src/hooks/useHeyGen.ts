@@ -39,6 +39,13 @@ export function useHeyGen(opts: UseHeyGenOpts = {}) {
   }, []);
 
   useEffect(() => {
+    // Cleanup al recibir aviso del main que vamos a salir.
+    return window.iTutor.heygen.onGracefulStop(() => {
+      void teardown();
+    });
+  }, [teardown]);
+
+  useEffect(() => {
     if (!enabled) return;
     let cancelled = false;
     (async () => {
