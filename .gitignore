@@ -1,0 +1,13 @@
+node_modules/
+out/
+dist/
+.env
+.env.local
+.DS_Store
+*.log
+.vite/
+.vscode/
+.idea/
+.claude/
+resources/whisper-models/
+resources/temp/

@@ -1,0 +1,102 @@
+@import "tailwindcss";
+
+@layer base {
+  :root {
+    --bg: 0 0% 6%;
+    --fg: 0 0% 96%;
+    --muted: 0 0% 60%;
+    --accent: 261 84% 68%;        /* violeta-iolite */
+    --accent-2: 191 91% 62%;      /* cian eléctrico */
+    --surface: 240 4% 10%;
+    --surface-2: 240 5% 14%;
+    --border: 240 5% 22%;
+    --ring: 261 84% 68%;
+    --danger: 0 84% 60%;
+    --success: 142 76% 52%;
+  }
+
+  html,
+  body,
+  #root {
+    height: 100%;
+    margin: 0;
+  }
+
+  body {
+    color: hsl(var(--fg));
+    font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display",
+      "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    background: transparent;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: hsl(var(--accent) / 0.35);
+  }
+}
+
+@layer components {
+  .drag-region {
+    -webkit-app-region: drag;
+  }
+  .no-drag {
+    -webkit-app-region: no-drag;
+  }
+
+  .glass-card {
+    background: linear-gradient(
+      180deg,
+      hsl(var(--surface) / 0.65),
+      hsl(var(--surface-2) / 0.55)
+    );
+    backdrop-filter: blur(28px) saturate(160%);
+    -webkit-backdrop-filter: blur(28px) saturate(160%);
+    border: 1px solid hsl(var(--border) / 0.55);
+    box-shadow:
+      0 24px 80px -16px rgb(0 0 0 / 0.55),
+      0 2px 4px -1px rgb(0 0 0 / 0.25),
+      inset 0 1px 0 hsl(0 0% 100% / 0.04);
+  }
+
+  .accent-glow {
+    background: radial-gradient(
+      120% 80% at 0% 0%,
+      hsl(var(--accent) / 0.25) 0%,
+      transparent 60%
+    ),
+    radial-gradient(
+      120% 80% at 100% 100%,
+      hsl(var(--accent-2) / 0.18) 0%,
+      transparent 60%
+    );
+  }
+
+  .stripe-shimmer {
+    background: linear-gradient(
+      110deg,
+      transparent 30%,
+      hsl(var(--accent) / 0.35) 50%,
+      transparent 70%
+    );
+    background-size: 300% 100%;
+    animation: shimmer 2.4s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0% { background-position: 200% 0; }
+    100% { background-position: -100% 0; }
+  }
+
+  .scrollbar-thin::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border-radius: 999px;
+  }
+  .scrollbar-thin::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
