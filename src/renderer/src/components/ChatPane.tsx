@@ -41,7 +41,7 @@ export function ChatPane() {
               initial={{ opacity: 0, y: 6 }}
               animate={{ opacity: 1, y: 0 }}
               className={cn(
-                "flex group",
+                "flex",
                 m.role === "user" ? "justify-end" : "justify-start"
               )}
             >
@@ -95,7 +95,7 @@ function AssistantBubble({
   };
 
   return (
-    <div className="relative max-w-[88%] rounded-2xl border border-white/5 bg-white/5 px-3.5 py-2.5 text-sm leading-relaxed text-white/95">
+    <div className="max-w-[88%] rounded-2xl border border-white/5 bg-white/5 px-3.5 py-2.5 text-sm leading-relaxed text-white/95">
       {text && <MessageMarkdown ref={mdRef} text={text} />}
       {toolCalls.length > 0 && (
         <div className="mt-2 flex flex-wrap gap-1.5">
@@ -112,18 +112,20 @@ function AssistantBubble({
         </span>
       )}
       {text && !streaming && (
-        <button
-          onClick={onCopy}
-          className={cn(
-            "absolute -right-1 -top-1 inline-flex h-6 items-center gap-1 rounded-full border border-white/10 bg-black/60 px-2 text-[10px] font-medium text-white/80 opacity-0 backdrop-blur transition-all",
-            "group-hover:opacity-100 hover:border-white/30 hover:text-white",
-            copied && "border-[hsl(var(--success))]/40 text-[hsl(var(--success))] opacity-100"
-          )}
-          title="Copiar con formato"
-        >
-          {copied ? <Check size={11} /> : <Copy size={11} />}
-          <span>{copied ? "Copiado" : "Copiar"}</span>
-        </button>
+        <div className="mt-2 flex justify-end border-t border-white/5 pt-2">
+          <button
+            onClick={onCopy}
+            className={cn(
+              "inline-flex h-6 items-center gap-1.5 rounded-md px-2 text-[10px] font-medium text-white/55 transition-colors",
+              "hover:bg-white/5 hover:text-white",
+              copied && "text-[hsl(var(--success))] hover:text-[hsl(var(--success))]"
+            )}
+            title="Copiar con formato (HTML + texto plano)"
+          >
+            {copied ? <Check size={11} /> : <Copy size={11} />}
+            <span>{copied ? "Copiado" : "Copiar"}</span>
+          </button>
+        </div>
       )}
     </div>
   );
