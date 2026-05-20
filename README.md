@@ -8,7 +8,7 @@
 
 - **Shell**: Electron 33 + Vite + React 19 + Tailwind 4 + shadcn-style primitives
 - **Brain**: `@anthropic-ai/claude-agent-sdk` con `ANTHROPIC_API_KEY`
-- **Avatar**: `@heygen/streaming-avatar` (LiveAvatar SDK)
+- **Avatar**: `@heygen/liveavatar-web-sdk` (LITE mode, 1 crédito/min)
 - **Voice in**: `nodejs-whisper` (whisper.cpp local, modelo `base`)
 - **Computer use**: MCP server custom + `@nut-tree-fork/nut-js` + `screenshot-desktop`
 - **Browser automation**: `@playwright/mcp` (MCP oficial Microsoft)
@@ -23,7 +23,7 @@ npm install
 cp .env.example .env
 # Editá .env y pegá:
 #   ANTHROPIC_API_KEY=sk-ant-...       (https://console.anthropic.com/settings/keys)
-#   HEYGEN_API_KEY=...                  (https://app.heygen.com/settings)
+#   LIVEAVATAR_API_KEY=...              (https://app.liveavatar.com → Settings → API Keys)
 
 # 3. Levantar en dev
 npm run dev
@@ -94,9 +94,15 @@ src/
 
 | Item | Aproximado |
 |---|---|
-| Claude API (Sonnet 4.6) | ~$20-60/mes uso personal |
-| HeyGen LiveAvatar (~30 min/día) | ~$50-100/mes |
+| Claude API (Haiku 4.5 default) | ~$5-15/mes uso personal |
+| Claude API (Sonnet 4.6 cuando se escala) | +$15-40/mes |
+| LiveAvatar LITE (~30 min/día, 1 cred/min) | ~$25-60/mes |
 | Whisper | $0 (local) |
+
+**Optimizaciones de tokens ya activas**:
+- Default model = Haiku 4.5 (5× más barato que Sonnet, ~$1/MTok in)
+- Screenshots reescalados a 1280px ancho max (~75% ahorro tokens vision)
+- Prompt caching del system + tool definitions (~90% descuento en repeticiones)
 
 ## Licencia
 
